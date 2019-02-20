@@ -1,0 +1,16 @@
+<launch>
+    <arg name="robot" default="pr2" />
+	<arg name="KINECT1" default="$(optenv KINECT1 false)" />
+	<arg name="KINECT2" default="$(optenv KINECT2 false)" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find pr2_description)/robots/pr2.urdf.xacro' --inorder KINECT1:=$(arg KINECT1) KINECT2:=$(arg KINECT2)" />
+
+    <rosparam file="$(find sigverse_pr2_control)/config/controller.yaml" command="load"/>
+    <rosparam file="$(find sigverse_pr2_control)/config/joint_limits.yaml" command="load"/>
+
+    <node name="sigverse_pr2_control" pkg="sigverse_pr2_control" type="sigverse_pr2_control" output="screen"/>
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+          args="joint_state_controller head_traj_controller l_arm_controller r_arm_controller torso_controller"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+</launch>
