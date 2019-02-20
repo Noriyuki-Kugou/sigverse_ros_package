@@ -1,0 +1,15 @@
+<launch>
+
+    <group ns="hsrb">
+        <rosparam file="$(find sigverse_hsr_control)/config/controller.yaml" command="load" ns="/hsrb"/>
+        <rosparam file="$(find sigverse_hsr_control)/config/joint_limits.yaml" command="load" ns="/hsrb"/>
+        <param name="/hsrb/robot_description" textfile="$(find hsr_description)/robots/hsrb4s.urdf" />
+
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+
+        <node name="sigverse_hsr_control" pkg="sigverse_hsr_control" type="sigverse_hsr_control" output="screen"/>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+            args="--namespace=/hsrb joint_state_controller arm_trajectory_controller head_trajectory_controller gripper_controller"/>
+    </group>
+</launch>
